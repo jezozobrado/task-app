@@ -1,95 +1,75 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+"use client";
+import { Button, Flex, Form, Space, Table } from "antd";
+import { useForm } from "antd/es/form/Form";
+import React from "react";
+import useGetData from "./hooks/useGetData";
+import useColumnTask from "./hooks/useColumnTask";
+import Search from "antd/es/input/Search";
+import useTaskStore from "./store/useTaskStore";
+import TaskModal from "./components/TaskModal";
+import { PlusOutlined } from "@ant-design/icons";
+import { ACTION } from "./models/task";
 
-export default function Home() {
+const Task = () => {
+  const [form] = useForm();
+  const columns = useColumnTask();
+  const { data } = useGetData();
+  const openModal = useTaskStore((s) => s.openModal);
+  const isOpenModal = useTaskStore((s) => s.isOpenModal);
+  const setAction = useTaskStore((s) => s.setAction);
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          maxWidth: "600px",
+          margin: "auto",
+          marginTop: 40,
+        }}
+      >
+        <Space direction="vertical" style={{ width: "100%" }}>
+          <Form
+            form={form}
+            name="basic"
+            onFinish={(e) => {
+              console.log(e);
+            }}
+            autoComplete="off"
           >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
+            <Flex style={{ width: "100%" }} gap={10}>
+              <Form.Item name="search" style={{ flex: 1 }}>
+                <Search
+                  style={{ width: "full" }}
+                  onSearch={(value, _e, info) =>
+                    console.log(info?.source, value)
+                  }
+                />
+              </Form.Item>
+              <Form.Item>
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    openModal();
+                    setAction(ACTION.Add);
+                  }}
+                  icon={<PlusOutlined />}
+                >
+                  Add
+                </Button>
+              </Form.Item>
+            </Flex>
+          </Form>
+          <Table
+            columns={columns}
+            dataSource={data}
+            style={{ fontStyle: "inter" }}
+          />
+        </Space>
       </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
-}
+      {isOpenModal && <TaskModal />}
+    </>
+  );
+};
+export default Task;
