@@ -65,6 +65,7 @@ const Task = () => {
             columns={columns}
             dataSource={data}
             style={{ fontStyle: "inter" }}
+            rowKey={(record) => record.content}
           />
         </Space>
       </div>

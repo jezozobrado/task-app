@@ -46,8 +46,10 @@ const useColumnTask = () => {
           </Flex>
           <div style={{ marginBlock: "8px" }}>{record.content}</div>
           <div>
-            {record.tags.map((tag) => (
-              <Tag color="red">{tag}</Tag>
+            {record.tags.map((tag, i) => (
+              <Tag color="red" key={i}>
+                {tag}
+              </Tag>
             ))}
           </div>
         </Flex>
